@@ -70,8 +70,8 @@ class ARROW_EXPORT HadoopFileSystem : public FileSystem {
   /// \cond FALSE
   using FileSystem::GetFileInfo;
   /// \endcond
-  Result<FileInfo> GetFileInfo(const std::string& path) override;
-  Result<std::vector<FileInfo>> GetFileInfo(const FileSelector& select) override;
+  Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
+  Result<std::vector<FileInfo>> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) override;
 
   Status CreateDir(const std::string& path, bool recursive = true) override;
 

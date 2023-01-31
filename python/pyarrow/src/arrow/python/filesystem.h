@@ -83,11 +83,11 @@ class ARROW_PYTHON_EXPORT PyFileSystem : public arrow::fs::FileSystem {
 
   bool Equals(const FileSystem& other) const override;
 
-  Result<arrow::fs::FileInfo> GetFileInfo(const std::string& path) override;
+  Result<arrow::fs::FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
   Result<std::vector<arrow::fs::FileInfo>> GetFileInfo(
-      const std::vector<std::string>& paths) override;
+      const std::vector<std::string>& paths, const bool needs_extended_file_info=true) override;
   Result<std::vector<arrow::fs::FileInfo>> GetFileInfo(
-      const arrow::fs::FileSelector& select) override;
+      const arrow::fs::FileSelector& select, const bool needs_extended_file_info=true) override;
 
   Status CreateDir(const std::string& path, bool recursive = true) override;
 

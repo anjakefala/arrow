@@ -131,7 +131,7 @@ FileSystem::~FileSystem() {}
 Result<std::string> FileSystem::NormalizePath(std::string path) { return path; }
 
 Result<std::vector<FileInfo>> FileSystem::GetFileInfo(
-    const std::vector<std::string>& paths) {
+    const std::vector<std::string>& paths, const bool needs_extended_file_info) {
   std::vector<FileInfo> res;
   res.reserve(paths.size());
   for (const auto& path : paths) {
@@ -333,14 +333,14 @@ Result<std::string> SubTreeFileSystem::NormalizePath(std::string path) {
   return StripBase(std::move(normalized));
 }
 
-Result<FileInfo> SubTreeFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> SubTreeFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   ARROW_ASSIGN_OR_RAISE(auto real_path, PrependBase(path));
   ARROW_ASSIGN_OR_RAISE(FileInfo info, base_fs_->GetFileInfo(real_path));
   RETURN_NOT_OK(FixInfo(&info));
   return info;
 }
 
-Result<std::vector<FileInfo>> SubTreeFileSystem::GetFileInfo(const FileSelector& select) {
+Result<std::vector<FileInfo>> SubTreeFileSystem::GetFileInfo(const FileSelector& select, const bool needs_extended_file_info) {
   auto selector = select;
   ARROW_ASSIGN_OR_RAISE(selector.base_dir, PrependBase(selector.base_dir));
   ARROW_ASSIGN_OR_RAISE(auto infos, base_fs_->GetFileInfo(selector));
@@ -504,12 +504,12 @@ SlowFileSystem::SlowFileSystem(std::shared_ptr<FileSystem> base_fs,
 
 bool SlowFileSystem::Equals(const FileSystem& other) const { return this == &other; }
 
-Result<FileInfo> SlowFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> SlowFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   latencies_->Sleep();
   return base_fs_->GetFileInfo(path);
 }
 
-Result<std::vector<FileInfo>> SlowFileSystem::GetFileInfo(const FileSelector& selector) {
+Result<std::vector<FileInfo>> SlowFileSystem::GetFileInfo(const FileSelector& selector, const bool needs_extended_file_info) {
   latencies_->Sleep();
   return base_fs_->GetFileInfo(selector);
 }

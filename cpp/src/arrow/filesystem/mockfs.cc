@@ -548,7 +548,7 @@ Status MockFileSystem::DeleteFile(const std::string& path) {
   return Status::OK();
 }
 
-Result<FileInfo> MockFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> MockFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   RETURN_NOT_OK(ValidatePath(path));
   auto parts = SplitAbstractPath(path);
   RETURN_NOT_OK(ValidateAbstractPathParts(parts));
@@ -566,7 +566,7 @@ Result<FileInfo> MockFileSystem::GetFileInfo(const std::string& path) {
   return info;
 }
 
-Result<FileInfoVector> MockFileSystem::GetFileInfo(const FileSelector& selector) {
+Result<FileInfoVector> MockFileSystem::GetFileInfo(const FileSelector& selector, const bool needs_extended_file_info) {
   RETURN_NOT_OK(ValidatePath(selector.base_dir));
   auto parts = SplitAbstractPath(selector.base_dir);
   RETURN_NOT_OK(ValidateAbstractPathParts(parts));

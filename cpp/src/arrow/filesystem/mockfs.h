@@ -70,8 +70,8 @@ class ARROW_EXPORT MockFileSystem : public FileSystem {
   // XXX It's not very practical to have to explicitly declare inheritance
   // of default overrides.
   using FileSystem::GetFileInfo;
-  Result<FileInfo> GetFileInfo(const std::string& path) override;
-  Result<std::vector<FileInfo>> GetFileInfo(const FileSelector& select) override;
+  Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
+  Result<std::vector<FileInfo>> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) override;
 
   Status CreateDir(const std::string& path, bool recursive = true) override;
 

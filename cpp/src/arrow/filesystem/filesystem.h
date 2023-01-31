@@ -183,15 +183,15 @@ class ARROW_EXPORT FileSystem : public std::enable_shared_from_this<FileSystem> 
   /// A nonexistent or unreachable file returns an Ok status and
   /// has a FileType of value NotFound.  An error status indicates
   /// a truly exceptional condition (low-level I/O error, etc.).
-  virtual Result<FileInfo> GetFileInfo(const std::string& path) = 0;
+  virtual Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) = 0;
   /// Same, for many targets at once.
-  virtual Result<FileInfoVector> GetFileInfo(const std::vector<std::string>& paths);
+  virtual Result<FileInfoVector> GetFileInfo(const std::vector<std::string>& paths, const bool needs_extended_file_info=true);
   /// Same, according to a selector.
   ///
   /// The selector's base directory will not be part of the results, even if
   /// it exists.
   /// If it doesn't exist, see `FileSelector::allow_not_found`.
-  virtual Result<FileInfoVector> GetFileInfo(const FileSelector& select) = 0;
+  virtual Result<FileInfoVector> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) = 0;
 
   /// Async version of GetFileInfo
   virtual Future<FileInfoVector> GetFileInfoAsync(const std::vector<std::string>& paths);
@@ -342,8 +342,8 @@ class ARROW_EXPORT SubTreeFileSystem : public FileSystem {
   /// \cond FALSE
   using FileSystem::GetFileInfo;
   /// \endcond
-  Result<FileInfo> GetFileInfo(const std::string& path) override;
-  Result<FileInfoVector> GetFileInfo(const FileSelector& select) override;
+  Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
+  Result<FileInfoVector> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) override;
 
   FileInfoGenerator GetFileInfoGenerator(const FileSelector& select) override;
 
@@ -412,8 +412,8 @@ class ARROW_EXPORT SlowFileSystem : public FileSystem {
   bool Equals(const FileSystem& other) const override;
 
   using FileSystem::GetFileInfo;
-  Result<FileInfo> GetFileInfo(const std::string& path) override;
-  Result<FileInfoVector> GetFileInfo(const FileSelector& select) override;
+  Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
+  Result<FileInfoVector> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) override;
 
   Status CreateDir(const std::string& path, bool recursive = true) override;
 

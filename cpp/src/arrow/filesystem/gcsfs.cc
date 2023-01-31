@@ -352,7 +352,7 @@ class GcsFileSystem::Impl {
 
   const GcsOptions& options() const { return options_; }
 
-  Result<FileInfo> GetFileInfo(const GcsPath& path) {
+  Result<FileInfo> GetFileInfo(const GcsPath& path, const bool needs_extended_file_info=true) {
     if (path.object.empty()) {
       auto meta = client_.GetBucketMetadata(path.bucket);
       return GetFileInfoBucket(path, std::move(meta).status());
@@ -376,7 +376,7 @@ class GcsFileSystem::Impl {
     return info;
   }
 
-  Result<FileInfoVector> GetFileInfo(const FileSelector& select) {
+  Result<FileInfoVector> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) {
     ARROW_ASSIGN_OR_RAISE(auto p, GcsPath::FromString(select.base_dir));
     // Adding the trailing '/' avoids problems with files named 'a', 'ab', 'ac'  where
     // GCS would return all of them if the prefix is 'a'.
@@ -853,12 +853,12 @@ bool GcsFileSystem::Equals(const FileSystem& other) const {
   return impl_->options().Equals(fs.impl_->options());
 }
 
-Result<FileInfo> GcsFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> GcsFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   ARROW_ASSIGN_OR_RAISE(auto p, GcsPath::FromString(path));
   return impl_->GetFileInfo(p);
 }
 
-Result<FileInfoVector> GcsFileSystem::GetFileInfo(const FileSelector& select) {
+Result<FileInfoVector> GcsFileSystem::GetFileInfo(const FileSelector& select, const bool needs_extended_file_info) {
   return impl_->GetFileInfo(select);
 }
 

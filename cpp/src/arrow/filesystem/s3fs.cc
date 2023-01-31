@@ -2234,7 +2234,7 @@ S3Options S3FileSystem::options() const { return impl_->options(); }
 
 std::string S3FileSystem::region() const { return impl_->region(); }
 
-Result<FileInfo> S3FileSystem::GetFileInfo(const std::string& s) {
+Result<FileInfo> S3FileSystem::GetFileInfo(const std::string& s, const bool needs_extended_file_info) {
   ARROW_ASSIGN_OR_RAISE(auto path, S3Path::FromString(s));
   FileInfo info;
   info.set_path(s);
@@ -2297,7 +2297,7 @@ Result<FileInfo> S3FileSystem::GetFileInfo(const std::string& s) {
   }
 }
 
-Result<FileInfoVector> S3FileSystem::GetFileInfo(const FileSelector& select) {
+Result<FileInfoVector> S3FileSystem::GetFileInfo(const FileSelector& select, const bool needs_extended_file_info) {
   ARROW_ASSIGN_OR_RAISE(auto base_path, S3Path::FromString(select.base_dir));
 
   FileInfoVector results;

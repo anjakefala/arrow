@@ -64,7 +64,7 @@ bool PyFileSystem::Equals(const FileSystem& other) const {
   return result;
 }
 
-Result<FileInfo> PyFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> PyFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   FileInfo info;
 
   auto st = SafeCallIntoPython([&]() -> Status {
@@ -76,7 +76,7 @@ Result<FileInfo> PyFileSystem::GetFileInfo(const std::string& path) {
 }
 
 Result<std::vector<FileInfo>> PyFileSystem::GetFileInfo(
-    const std::vector<std::string>& paths) {
+    const std::vector<std::string>& paths, const bool needs_extended_file_info) {
   std::vector<FileInfo> infos;
 
   auto st = SafeCallIntoPython([&]() -> Status {
@@ -87,7 +87,7 @@ Result<std::vector<FileInfo>> PyFileSystem::GetFileInfo(
   return infos;
 }
 
-Result<std::vector<FileInfo>> PyFileSystem::GetFileInfo(const FileSelector& select) {
+Result<std::vector<FileInfo>> PyFileSystem::GetFileInfo(const FileSelector& select, const bool needs_extended_file_info) {
   std::vector<FileInfo> infos;
 
   auto st = SafeCallIntoPython([&]() -> Status {

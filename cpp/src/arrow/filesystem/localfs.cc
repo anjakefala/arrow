@@ -300,13 +300,13 @@ bool LocalFileSystem::Equals(const FileSystem& other) const {
   }
 }
 
-Result<FileInfo> LocalFileSystem::GetFileInfo(const std::string& path) {
+Result<FileInfo> LocalFileSystem::GetFileInfo(const std::string& path, const bool needs_extended_file_info) {
   RETURN_NOT_OK(ValidatePath(path));
   ARROW_ASSIGN_OR_RAISE(auto fn, PlatformFilename::FromString(path));
   return StatFile(fn.ToNative());
 }
 
-Result<std::vector<FileInfo>> LocalFileSystem::GetFileInfo(const FileSelector& select) {
+Result<std::vector<FileInfo>> LocalFileSystem::GetFileInfo(const FileSelector& select, const bool needs_extended_file_info) {
   RETURN_NOT_OK(ValidatePath(select.base_dir));
   ARROW_ASSIGN_OR_RAISE(auto fn, PlatformFilename::FromString(select.base_dir));
   std::vector<FileInfo> results;

@@ -179,8 +179,8 @@ class ARROW_EXPORT GcsFileSystem : public FileSystem {
 
   bool Equals(const FileSystem& other) const override;
 
-  Result<FileInfo> GetFileInfo(const std::string& path) override;
-  Result<FileInfoVector> GetFileInfo(const FileSelector& select) override;
+  Result<FileInfo> GetFileInfo(const std::string& path, const bool needs_extended_file_info=true) override;
+  Result<FileInfoVector> GetFileInfo(const FileSelector& select, const bool needs_extended_file_info=true) override;
 
   Status CreateDir(const std::string& path, bool recursive) override;
 
