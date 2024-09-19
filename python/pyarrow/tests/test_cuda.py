@@ -137,6 +137,28 @@ def test_copy_from_buffer():
         assert cudabuf2.device == mm2.device
 
 
+def test_view_of_buffer():
+    data = np.array([1, 2, 3, 4, 5])
+    buf = pa.py_buffer(data)
+    cudabuf = global_context.buffer_from_data(buf)
+
+    mm2 = global_context1.memory_manager
+    for dest in [mm2, mm2.device]:
+        buf2 = cudabuf.view(dest)
+        assert buf2.device_type == pa.DeviceAllocationType.CUDA
+        cudabuf2 = cuda.CudaBuffer.from_buffer(buf2)
+        assert cudabuf2.size == cudabuf.size
+        assert not cudabuf2.is_cpu
+        assert cudabuf2.device_type == pa.DeviceAllocationType.CUDA
+
+        assert cudabuf2.copy_to_host().equals(buf)
+        assert cudabuf2.device == mm2.device
+
+        # test that it is a view, and not a copy
+        data[1] = 20
+        assert np.frombuffer(buf2, dtype=np.int32).tolist() == [20, 2, 3, 4, 5]
+
+
 @pytest.mark.parametrize("size", [0, 1, 1000])
 def test_context_device_buffer(size):
     # Creating device buffer from host buffer;

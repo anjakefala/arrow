@@ -370,6 +370,8 @@ cdef extern from "arrow/api.h" namespace "arrow" nogil:
         @staticmethod
         CResult[shared_ptr[CBuffer]] Copy(shared_ptr[CBuffer] source, const shared_ptr[CMemoryManager]& to)
 
+        CResult[shared_ptr[CBuffer]] View(shared_ptr[CBuffer] source, const shared_ptr[CMemoryManager]& to) const
+
     CResult[shared_ptr[CBuffer]] SliceBufferSafe(
         const shared_ptr[CBuffer]& buffer, int64_t offset)
     CResult[shared_ptr[CBuffer]] SliceBufferSafe(

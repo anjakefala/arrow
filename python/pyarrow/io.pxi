@@ -1480,6 +1480,47 @@ cdef class Buffer(_Weakrefable):
         c_buffer = GetResultValue(CBuffer.Copy(self.buffer, c_memory_manager))
         return pyarrow_wrap_buffer(c_buffer)
 
+    def view(self, destination):
+        """
+        Zero-copy access this buffer, from destination.
+
+        The underlying mechanism is typically implemented by the kernel or device driver,
+        and may involve lazy caching of parts of the buffer contents on the destination
+        device's memory.
+
+        If a non-copy view is unsupported for the buffer on the given device,
+        an error is raised.
+
+        Parameters
+        ----------
+        destination : pyarrow.MemoryManager or pyarrow.Device
+            MemoryManager or device on which to view buffer contents
+
+        Returns
+        -------
+        Buffer or None
+        """
+        cdef:
+            shared_ptr[CBuffer] c_buffer
+            shared_ptr[CMemoryManager] c_memory_manager
+
+        if isinstance(destination, Device):
+            c_memory_manager = (<Device>destination).unwrap().get().default_memory_manager()
+        elif isinstance(destination, MemoryManager):
+            c_memory_manager = (<MemoryManager>destination).unwrap()
+        else:
+            raise TypeError(
+                "Argument 'destination' is incorrect type (expected pyarrow.Device or "
+                f"pyarrow.MemoryManager, got {type(destination)})"
+            )
+
+        c_buffer = GetResultValue(self.buffer.get().View(self.buffer, c_memory_manager))
+
+        if c_buffer.get() == nullptr:
+            return None
+
+        return pyarrow_wrap_buffer(c_buffer)
+
     @property
     def parent(self):
         cdef shared_ptr[CBuffer] parent_buf = self.buffer.get().parent()
